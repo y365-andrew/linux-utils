@@ -1,0 +1,24 @@
+
+## Adjust the brightness by editing the brightness file ##
+## Not sure if there's a better way to do this but this seems to work ##
+## Written and tested for a Lenovo ThinkPad Yoga 460 ##
+
+INCREMENT=$1
+
+CURRENT_BRIGHTNESS=$(cat /sys/class/backlight/intel_backlight/brightness)
+MAX_BRIGHTNESS=$(cat /sys/class/backlight/intel_backlight/max_brightness)
+
+BRIGHTNESS_PERCENTAGE=$(((100*$CURRENT_BRIGHTNESS)/$MAX_BRIGHTNESS))
+
+NEW_BRIGHTNESS_PERCENTAGE=$(($BRIGHTNESS_PERCENTAGE + $INCREMENT))
+
+NEW_BRIGHTNESS=$((($NEW_BRIGHTNESS_PERCENTAGE * $MAX_BRIGHTNESS) / 100))
+
+[ $NEW_BRIGHTNESS -gt $MAX_BRIGHTNESS ] && NEW_BRIGHTNESS=$MAX_BRIGHTNESS
+[ $NEW_BRIGHTNESS -lt 0 ] && NEW_BRIGHTNESS=0
+ 
+#echo "Current: $BRIGHTNESS_PERCENTAGE%"
+#echo "New: $NEW_BRIGHTNESS_PERCENTAGE%"
+#echo "New Val: $NEW_BRIGHTNESS"
+
+echo $NEW_BRIGHTNESS | tee /sys/class/backlight/intel_backlight/brightness > x
